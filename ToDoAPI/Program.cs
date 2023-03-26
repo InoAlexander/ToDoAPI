@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using ToDoAPI.Data;
+using ToDoAPI.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,7 +20,13 @@ app.MapGet("api/todo", async (AppDbContext context) =>
     return Results.Ok(items);
 });
 
-
+app.MapPost("api/todo", async (AppDbContext context, ToDo toDo) =>
+{
+    await context.ToDos.AddAsync(toDo);
+    await context.SaveChangesAsync();
+    // passing back the location where the resource can be found
+    return Results.Created($"api/todo/{toDo.Id}", toDo);
+});
 
 app.Run();
 
