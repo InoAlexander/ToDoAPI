@@ -45,5 +45,20 @@ app.MapPut("api/todo/{id}", async (AppDbContext context, int id, ToDo toDo) =>
     return Results.NoContent();
 });
 
+// delete method - doesnt need to pass the model because well be deleting it
+app.MapDelete("api/todo/{id}", async (AppDbContext context, int id) =>
+{ 
+    var toDoModel = await context.ToDos.FirstOrDefaultAsync(t => t.Id == id);
+
+    if (toDoModel == null) 
+    {
+        return Results.NotFound();
+    }
+    // searching to delete the model
+    context.ToDos.Remove(toDoModel);
+    await context.SaveChangesAsync();
+    return Results.NoContent();
+});
+
 app.Run();
 
